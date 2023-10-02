@@ -12,8 +12,8 @@ bottomTen = data.tail(10) #providing bottom ten rows of the data set
 
 dataShape = data.shape #getting the shape of the data with the shape attribute of the pandas library
 
-print("Number of rows: ",dataShape[0])
-print("Number of columns: ",dataShape[1])
+print("Number of rows: ", dataShape[0])
+print("Number of columns: ", dataShape[1])
 
 dataInfo = data.info #register all the information into a variable using the pandas attribute .info
 
@@ -21,7 +21,7 @@ print("Are there any missing values? - ", data.isnull().values.any())  #Checks t
 
 nullData = data.isnull().sum() #shows all the areas where the data is null
 
-sns.heatmap(nullData) # creates a heatmap of all the areas where there is null data using seaborn heatmap method
+sns.heatmap(data.isnull()) # creates a heatmap of all the areas where there is null data using seaborn heatmap method
 
 percent_missing = nullData * 100/len(data) #shows what percent of values are missing from which column
 
@@ -37,11 +37,11 @@ data = data.drop_duplicates()
 
 data.describe() #use describe method to sow the quantiles, min, max, median, std, count and box plots of the values for the given values | overall statsitics for the data set are given
 
-data.describe('all') #includes categorical and numerical values in the description as shown above
+# data.describe('all') | includes categorical and numerical values in the description as shown above
 
 cols = data.columns #getting the column name attributes using the .columns panda attribute
 
-data[data[cols[1]>=180]]['Title'] #attributes edited and based on what qualifications you prefer, here it is by the amount of minutes as a minimum you want
+data[data['Runtime (Minutes)']>=180]['Title'] #attributes edited and based on what qualifications you prefer, here it is by the amount of minutes as a minimum you want
      
 highestVotes = data.groupby('Year')['Votes'].mean().sort_values(ascending=False) #Obtain the ascneidng order of votes in a given year by the number of votes in each year
 
@@ -54,7 +54,15 @@ sns.barplot(x='Year', y="Revenue (Millions)", data=data) #Creating a bar plot to
 plt.title("Revenue by year")
 plt.show()
 
-data.groupby('Director')['Rating'].mean().sort_values(ascending=False) #getting the highest (top 10) number of directors lengthy movies and returning their title and runtime
+data.groupby('Director')['Rating'].mean().sort_values(ascending=False) #getting the highest mean ratings for each director
+
+largestRuntime = data.nlargest(10, 'Runtime (Minutes)') #getting the highest (top 10) number of directors lengthy movies and returning their title and runtime
+
+largestRuntime.set_index('Title')
+
+print(largestRuntime)
+
+sns.barplot(x='Runtime (Minutes)',y=largestRuntime.index, data=largestRuntime) #Creates a barplot with the largest runtime of the given data
 
 
 
