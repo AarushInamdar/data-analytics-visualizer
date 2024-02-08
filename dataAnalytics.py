@@ -64,5 +64,23 @@ print(largestRuntime)
 
 sns.barplot(x='Runtime (Minutes)',y=largestRuntime.index, data=largestRuntime) #Creates a barplot with the largest runtime of the given data
 
+def repp(string):
+    return string.replace("[","").replace("]","").replace("u'","").replace("',",",")[:-1]
+#Apply that function to every entry    
+movies_series = movies['actors_list'].apply(repp)
+#Declare a list to store the split values
+actors_list = []
+for movie_actors in movies_series:
+    actors_list.append([e.strip() for e in movie_actors.split(',')])
+#Declare a dictionary and see if the actor name key exist and then count accordingly.
+actor_dict = {}
+for actor in actors_list:
+    for a in actor:
+        if a in actor_dict:
+            actor_dict[a] +=1
+        else:
+            actor_dict[a] = 1
+
+actor_dict
 
 
