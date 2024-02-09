@@ -1,6 +1,10 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
 
 yourCSVLink = 'IMDB-Movie-Data.csv' #enter your own csv link here to view trhe data analytics and statistics on that csv
 
@@ -84,3 +88,62 @@ for actor in actors_list:
 actor_dict
 
 
+# Assuming 'data' has a 'Director' and 'Rating' column
+# Convert categorical 'Director' to numeric
+data['Director_code'] = data['Director'].astype('category').cat.codes
+
+# Prepare features (X) and target (y)
+X = data[['Director_code']]  # More features can be added here
+y = data['Rating']
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict and evaluate the model
+predictions = model.predict(X_test)
+print("Mean Squared Error:", mean_squared_error(y_test, predictions))
+
+
+# Split actors and explode the DataFrame
+data['Actors_list'] = data['Actors'].str.split(',')
+exploded_actors = data.explode('Actors_list')
+
+# Analyze the average rating per actor
+actor_ratings = exploded_actors.groupby('Actors_list')['Rating'].mean().sort_values(ascending=False)
+
+# For a large dataset, consider visualizing the top 20 actors
+sns.barplot(x=actor_ratings.head(20).values, y=actor_ratings.head(20).index)
+plt.title("Average Rating for Top 20 Actors")
+plt.show()
+
+
+# Assuming 'data' has a 'Genre' and 'Rating' column
+# Splitting genres since a movie can have multiple genres
+data['Genres'] = data['Genre'].str.split(',')
+
+# Explode the DataFrame so each genre gets its own row
+exploded_genres = data.explode('Genres')
+
+# Now, you can perform analysis on genres
+genre_ratings = exploded_genres.groupby('Genres')['Rating'].mean().sort_values(ascending=False)
+sns.barplot(x=genre_ratings.index, y=genre_ratings.values)
+plt.xticks(rotation=90)
+plt.title("Average Rating by Genre")
+plt.show()
+
+
+# Split actors and explode the DataFrame
+data['Actors_list'] = data['Actors'].str.split(',')
+exploded_actors = data.explode('Actors_list')
+
+# Analyze the average rating per actor
+actor_ratings = exploded_actors.groupby('Actors_list')['Rating'].mean().sort_values(ascending=False)
+
+# For a large dataset, consider visualizing the top 20 actors
+sns.barplot(x=actor_ratings.head(20).values, y=actor_ratings.head(20).index)
+plt.title("Average Rating for Top 20 Actors")
+plt.show()
